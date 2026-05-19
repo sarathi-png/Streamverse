@@ -8,7 +8,7 @@ import { GENRE_OPTIONS, LANGUAGE_OPTIONS, YEAR_OPTIONS, DUBBED_OPTIONS, CATEGORY
 import { useApp } from '@/contexts/AppContext';
 import type { MediaType, TMDBMovie } from '@/types';
 
-type FilterKey = 'type' | 'genre' | 'language' | 'year' | 'translations';
+type FilterKey = 'type' | 'genre' | 'language' | 'year' | 'dubbed';
 
 function getFilterLabel(value: string): string {
   const maps = [GENRE_OPTIONS, LANGUAGE_OPTIONS, YEAR_OPTIONS, DUBBED_OPTIONS];
@@ -25,10 +25,10 @@ export default function BrowsePage() {
   const genre = searchParams.get('genre') || '';
   const language = searchParams.get('language') || '';
   const year = searchParams.get('year') || '';
-  const translations = searchParams.get('translations') || '';
+  const dubbed = searchParams.get('dubbed') || '';
   const page = parseInt(searchParams.get('page') || '1', 10);
 
-  const { data, isLoading, error } = useDiscover(type, genre, language, year, page, translations);
+  const { data, isLoading, error } = useDiscover(type, genre, language, year, page);
   const { isBookmarked, openDetail, playContent, handleToggleBookmarkForDetail } = useApp();
 
   const activeFilters = useMemo(() => {
@@ -36,9 +36,9 @@ export default function BrowsePage() {
     if (genre) filters.push({ key: 'genre', label: `Genre: ${getFilterLabel(genre)}`, value: genre });
     if (language) filters.push({ key: 'language', label: `Language: ${getFilterLabel(language)}`, value: language });
     if (year) filters.push({ key: 'year', label: `Year: ${getFilterLabel(year)}`, value: year });
-    if (translations) filters.push({ key: 'translations', label: `Dubbed: ${getFilterLabel(translations)}`, value: translations });
+    if (dubbed) filters.push({ key: 'dubbed', label: `Dubbed: ${getFilterLabel(dubbed)}`, value: dubbed });
     return filters;
-  }, [genre, language, year, translations]);
+  }, [genre, language, year, dubbed]);
 
   const removeFilter = (key: FilterKey) => {
     const next = new URLSearchParams(searchParams);
@@ -67,6 +67,12 @@ export default function BrowsePage() {
     overview: item.overview,
   });
 
+  const filteredResults = useMemo(() => {
+    if (!data?.results) return [];
+    if (!dubbed) return data.results;
+    return data.results.filter(item => item.original_language === dubbed);
+  }, [data?.results, dubbed]);
+
   const title = activeFilters.length > 0
     ? activeFilters.map(f => f.label.replace(/^\w+:\s*/, '')).join(', ')
     : (type === 'movie' ? 'Discover Movies' : 'Discover TV Shows');
@@ -78,7 +84,7 @@ export default function BrowsePage() {
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
           <h1 className="text-3xl sm:text-4xl font-black text-white">{title}</h1>
           <p className="text-white/40 text-sm mt-1">
-            {data?.total_results ? `${data.total_results} results found` : 'Browse our collection'}
+            {data ? `${filteredResults.length} results found` : 'Browse our collection'}
           </p>
         </motion.div>
 
@@ -157,7 +163,7 @@ export default function BrowsePage() {
       ) : (
         <>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 sm:gap-5">
-            {(data?.results || []).map((item: TMDBMovie, i: number) => (
+            {filteredResults.map((item: TMDBMovie, i: number) => (
               <MovieCard
                 key={`${item.id}-${i}`}
                 item={item}

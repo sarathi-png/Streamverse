@@ -1,11 +1,13 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ChevronDown } from 'lucide-react';
 import { CATEGORY_GROUPS, type CategoryGroup, type CategoryOption, buildBrowseURL } from '@/data/categories';
 
 export default function CategoriesDropdown() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const type = (searchParams.get('type') || 'movie') as 'movie' | 'tv';
   const [open, setOpen] = useState(false);
   const btnRef = useRef<HTMLDivElement>(null);
   const [pos, setPos] = useState({ top: 0, left: 0 });
@@ -38,7 +40,7 @@ export default function CategoriesDropdown() {
 
   function handleSelect(section: string, value: string) {
     setOpen(false);
-    navigate(buildBrowseURL(section, value));
+    navigate(buildBrowseURL(section, value, type));
   }
 
   return (

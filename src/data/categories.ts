@@ -88,6 +88,6 @@ export function buildBrowseURL(section: string, value: string, type: string = 'm
   if (section === 'genre') params.set('genre', value);
   else if (section === 'language') params.set('language', value);
   else if (section === 'year') params.set('year', value);
-  else if (section === 'dubbed') params.set('translations', value);
+  else if (section === 'dubbed') params.set('dubbed', value);
   return `/browse?${params.toString()}`;
 }

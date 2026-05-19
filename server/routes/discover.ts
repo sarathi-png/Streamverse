@@ -5,7 +5,7 @@ export const discoverRouter = Router();
 
 discoverRouter.get('/', async (req: Request, res: Response) => {
   try {
-    const { type = 'movie', genre, language, year, page = '1', sort_by = 'popularity.desc', translations } = req.query;
+    const { type = 'movie', genre, language, year, page = '1', sort_by = 'popularity.desc' } = req.query;
     const params: Record<string, string> = { page: String(page), sort_by: String(sort_by) };
 
     if (genre) {
@@ -13,7 +13,6 @@ discoverRouter.get('/', async (req: Request, res: Response) => {
       params.with_genres = genreStr;
     }
     if (language) params.with_original_language = String(language);
-    if (translations) params.with_translations = String(translations);
     if (year) {
       const yearStr = String(year);
       const endpointType = String(type) as 'movie' | 'tv';
