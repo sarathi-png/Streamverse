@@ -1,12 +1,10 @@
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Helmet } from 'react-helmet-async';
 
 export default function PrivacyPage() {
+  useEffect(() => { document.title = 'Privacy Policy — StreamVerse'; }, []);
   return (
     <>
-      <Helmet>
-        <title>Privacy Policy — StreamVerse</title>
-      </Helmet>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

@@ -1,12 +1,10 @@
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Helmet } from 'react-helmet-async';
 
 export default function TermsPage() {
+  useEffect(() => { document.title = 'Terms of Service — StreamVerse'; }, []);
   return (
     <>
-      <Helmet>
-        <title>Terms of Service — StreamVerse</title>
-      </Helmet>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

@@ -1,7 +1,6 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Helmet } from 'react-helmet-async';
 import {
   Play, ArrowLeft, Star, Clock, Calendar, BookmarkPlus, BookmarkCheck,
   ChevronDown, Film, Tv, Users, Share2
@@ -134,15 +133,12 @@ export default function DetailPage() {
     return h > 0 ? `${h}h ${m}m` : `${m}m`;
   };
 
+  useEffect(() => {
+    document.title = `${title} — StreamVerse`;
+  }, [title]);
+
   return (
     <ErrorBoundary>
-      <Helmet>
-        <title>{title} — StreamVerse</title>
-        <meta name="description" content={detail.overview?.slice(0, 160)} />
-        <meta property="og:title" content={`${title} — StreamVerse`} />
-        <meta property="og:description" content={detail.overview?.slice(0, 160)} />
-        {poster && <meta property="og:image" content={poster} />}
-      </Helmet>
 
       <div className="min-h-screen">
         {/* Backdrop */}

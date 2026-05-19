@@ -1,7 +1,6 @@
-import { lazy, Suspense, useCallback } from 'react';
+import { lazy, Suspense, useCallback, useEffect } from 'react';
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Helmet } from 'react-helmet-async';
 import Navbar from '@/components/Navbar';
 import SearchModal from '@/components/SearchModal';
 import LoadingScreen from '@/components/LoadingScreen';
@@ -25,6 +24,10 @@ export default function App() {
   const navigate = useNavigate();
   const { searchOpen, setSearchOpen, nav } = useApp();
 
+  useEffect(() => {
+    document.title = 'StreamVerse — AI-Powered Cinematic Streaming';
+  }, []);
+
   const handleSearchItemClick = useCallback((id: number, type: MediaType) => {
     const path = type === 'movie' ? `/movie/${id}` : `/tv/${id}`;
     navigate(path);
@@ -33,15 +36,6 @@ export default function App() {
 
   return (
     <>
-      <Helmet>
-        <title>StreamVerse — AI-Powered Cinematic Streaming</title>
-        <meta name="description" content="StreamVerse is a futuristic AI-powered movie and TV streaming platform with cinematic UI and seamless playback." />
-        <meta property="og:title" content="StreamVerse — Cinematic Streaming" />
-        <meta property="og:description" content="AI-powered movie and TV streaming with premium experience." />
-        <meta property="og:type" content="website" />
-        <meta name="twitter:card" content="summary_large_image" />
-      </Helmet>
-
       <div className="min-h-screen bg-dark-900 text-white overflow-hidden">
         {/* Ambient background */}
         <div className="fixed inset-0 pointer-events-none z-0">

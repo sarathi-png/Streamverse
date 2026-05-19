@@ -1,14 +1,12 @@
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Helmet } from 'react-helmet-async';
 
 export default function DMCAPage() {
+  useEffect(() => { document.title = 'DMCA Notice — StreamVerse'; }, []);
   const currentYear = new Date().getFullYear();
 
   return (
     <>
-      <Helmet>
-        <title>DMCA Notice — StreamVerse</title>
-      </Helmet>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
