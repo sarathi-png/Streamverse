@@ -74,13 +74,23 @@ export function useTVCertification(id: number | null) {
   });
 }
 
-export function useDiscover(type: string = 'movie', genre?: string, language?: string, year?: string, page: number = 1) {
+export function useDiscover(
+  type: string = 'movie',
+  genre?: string,
+  language?: string,
+  year?: string,
+  dubbed?: string,
+  adult?: string,
+  page: number = 1
+) {
   const params = new URLSearchParams({ type, page: String(page) });
   if (genre) params.set('genre', genre);
   if (language) params.set('language', language);
   if (year) params.set('year', year);
+  if (dubbed) params.set('dubbed', dubbed);
+  if (adult) params.set('adult', adult);
   return useQuery({
-    queryKey: ['discover', type, genre, language, year, page],
+    queryKey: ['discover', type, genre, language, year, dubbed, adult, page],
     queryFn: () => fetchJSON<{ results: TMDBMovie[]; total_pages: number; total_results: number }>(`${BASE}/discover?${params.toString()}`),
   });
 }

@@ -4,7 +4,7 @@ export interface CategoryOption {
 }
 
 export interface CategoryGroup {
-  section: 'genre' | 'language' | 'year' | 'dubbed';
+  section: 'genre' | 'language' | 'year' | 'dubbed' | 'adult';
   label: string;
   items: CategoryOption[];
 }
@@ -58,6 +58,11 @@ export const YEAR_OPTIONS: CategoryOption[] = [
   { label: '1980s', value: '1980' },
 ];
 
+export const ADULT_OPTIONS: CategoryOption[] = [
+  { label: 'Show 18+', value: 'true' },
+  { label: 'Hide 18+', value: 'false' },
+];
+
 export const DUBBED_OPTIONS: CategoryOption[] = [
   { label: 'English Dubbed', value: 'en' },
   { label: 'Hindi Dubbed', value: 'hi' },
@@ -81,13 +86,24 @@ export const CATEGORY_GROUPS: CategoryGroup[] = [
   { section: 'language', label: 'Language', items: LANGUAGE_OPTIONS },
   { section: 'dubbed', label: 'Dubbed In', items: DUBBED_OPTIONS },
   { section: 'year', label: 'Year', items: YEAR_OPTIONS },
+  { section: 'adult', label: '18+', items: ADULT_OPTIONS },
 ];
 
-export function buildBrowseURL(section: string, value: string, type: string = 'movie'): string {
-  const params = new URLSearchParams({ type });
+export function buildBrowseURL(
+  section: string,
+  value: string,
+  type: string = 'movie',
+  currentParams?: URLSearchParams
+): string {
+  const params = currentParams
+    ? new URLSearchParams(currentParams)
+    : new URLSearchParams();
+  params.set('type', type);
   if (section === 'genre') params.set('genre', value);
   else if (section === 'language') params.set('language', value);
   else if (section === 'year') params.set('year', value);
   else if (section === 'dubbed') params.set('dubbed', value);
+  else if (section === 'adult') params.set('adult', value);
+  params.set('page', '1');
   return `/browse?${params.toString()}`;
 }

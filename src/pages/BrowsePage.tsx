@@ -4,14 +4,14 @@ import { motion } from 'framer-motion';
 import { X, Loader2 } from 'lucide-react';
 import { useDiscover } from '@/api/useTMDB';
 import MovieCard from '@/components/MovieCard';
-import { GENRE_OPTIONS, LANGUAGE_OPTIONS, YEAR_OPTIONS, DUBBED_OPTIONS, CATEGORY_GROUPS } from '@/data/categories';
+import { GENRE_OPTIONS, LANGUAGE_OPTIONS, YEAR_OPTIONS, DUBBED_OPTIONS, ADULT_OPTIONS, CATEGORY_GROUPS } from '@/data/categories';
 import { useApp } from '@/contexts/AppContext';
 import type { MediaType, TMDBMovie } from '@/types';
 
-type FilterKey = 'type' | 'genre' | 'language' | 'year' | 'dubbed';
+type FilterKey = 'type' | 'genre' | 'language' | 'year' | 'dubbed' | 'adult';
 
 function getFilterLabel(value: string): string {
-  const maps = [GENRE_OPTIONS, LANGUAGE_OPTIONS, YEAR_OPTIONS, DUBBED_OPTIONS];
+  const maps = [GENRE_OPTIONS, LANGUAGE_OPTIONS, YEAR_OPTIONS, DUBBED_OPTIONS, ADULT_OPTIONS];
   for (const map of maps) {
     const found = map.find(o => o.value === value);
     if (found) return found.label;
@@ -26,9 +26,10 @@ export default function BrowsePage() {
   const language = searchParams.get('language') || '';
   const year = searchParams.get('year') || '';
   const dubbed = searchParams.get('dubbed') || '';
+  const adult = searchParams.get('adult') || '';
   const page = parseInt(searchParams.get('page') || '1', 10);
 
-  const { data, isLoading, error } = useDiscover(type, genre, language, year, page);
+  const { data, isLoading, error } = useDiscover(type, genre, language, year, dubbed, adult, page);
   const { isBookmarked, openDetail, playContent, handleToggleBookmarkForDetail } = useApp();
 
   const activeFilters = useMemo(() => {
@@ -37,8 +38,9 @@ export default function BrowsePage() {
     if (language) filters.push({ key: 'language', label: `Language: ${getFilterLabel(language)}`, value: language });
     if (year) filters.push({ key: 'year', label: `Year: ${getFilterLabel(year)}`, value: year });
     if (dubbed) filters.push({ key: 'dubbed', label: `Dubbed: ${getFilterLabel(dubbed)}`, value: dubbed });
+    if (adult) filters.push({ key: 'adult', label: `18+: ${getFilterLabel(adult)}`, value: adult });
     return filters;
-  }, [genre, language, year, dubbed]);
+  }, [genre, language, year, dubbed, adult]);
 
   const removeFilter = (key: FilterKey) => {
     const next = new URLSearchParams(searchParams);
@@ -67,12 +69,6 @@ export default function BrowsePage() {
     overview: item.overview,
   });
 
-  const filteredResults = useMemo(() => {
-    if (!data?.results) return [];
-    if (!dubbed) return data.results;
-    return data.results.filter(item => item.original_language === dubbed);
-  }, [data?.results, dubbed]);
-
   const title = activeFilters.length > 0
     ? activeFilters.map(f => f.label.replace(/^\w+:\s*/, '')).join(', ')
     : (type === 'movie' ? 'Discover Movies' : 'Discover TV Shows');
@@ -84,7 +80,7 @@ export default function BrowsePage() {
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
           <h1 className="text-3xl sm:text-4xl font-black text-white">{title}</h1>
           <p className="text-white/40 text-sm mt-1">
-            {data ? `${filteredResults.length} results found` : 'Browse our collection'}
+            {data ? `${data.results?.length || 0} results found` : 'Browse our collection'}
           </p>
         </motion.div>
 
@@ -163,7 +159,7 @@ export default function BrowsePage() {
       ) : (
         <>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 sm:gap-5">
-            {filteredResults.map((item: TMDBMovie, i: number) => (
+            {(data?.results ?? []).map((item: TMDBMovie, i: number) => (
               <MovieCard
                 key={`${item.id}-${i}`}
                 item={item}

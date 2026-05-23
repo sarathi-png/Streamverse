@@ -1,11 +1,10 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { ChevronDown } from 'lucide-react';
 import { CATEGORY_GROUPS, type CategoryGroup, type CategoryOption, buildBrowseURL } from '@/data/categories';
 
 export default function CategoriesDropdown() {
-  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const type = (searchParams.get('type') || 'movie') as 'movie' | 'tv';
   const [open, setOpen] = useState(false);
@@ -39,8 +38,14 @@ export default function CategoriesDropdown() {
   }, [open, updatePosition]);
 
   function handleSelect(section: string, value: string) {
+    if (section === 'adult' && value === 'true') {
+      const ok = window.confirm(
+        'This section may contain content suitable for adults 18+.\n\nDo you want to continue?'
+      );
+      if (!ok) return;
+    }
     setOpen(false);
-    navigate(buildBrowseURL(section, value, type));
+    window.location.href = buildBrowseURL(section, value, type, searchParams);
   }
 
   return (
