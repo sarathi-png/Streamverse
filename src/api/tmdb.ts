@@ -165,6 +165,22 @@ export async function getByGenre(genreId: number, page: number = 1): Promise<{ r
   return fetchTMDB('/discover/movie', { with_genres: String(genreId), page: String(page), sort_by: 'popularity.desc' });
 }
 
+interface TMDBVideo {
+  key: string;
+  name: string;
+  type: string;
+  site: string;
+}
+
+export async function getItemVideos(mediaType: MediaType, id: number): Promise<TMDBVideo[]> {
+  try {
+    const data = await fetchTMDB<{ results: TMDBVideo[] }>(`/${mediaType}/${id}/videos`);
+    return (data.results || []).filter(v => v.site === 'YouTube' && (v.type === 'Trailer' || v.type === 'Teaser'));
+  } catch {
+    return [];
+  }
+}
+
 export function getEmbedUrl(mediaType: MediaType, id: number, season?: number, episode?: number): string {
   // Delegate to new provider system
   // Using dynamic import to avoid circular deps

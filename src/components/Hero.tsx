@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Play, Info, Star, TrendingUp, Volume2, VolumeX } from 'lucide-react';
-import { type TMDBMovie, getBackdropURL, getTitle, getYear, getMediaType, GENRES } from '@/api/tmdb';
+import { type TMDBMovie, getBackdropURL, getTitle, getYear, getMediaType, GENRES, getItemVideos } from '@/api/tmdb';
 
 interface HeroProps {
   items: TMDBMovie[];
@@ -13,15 +13,74 @@ export default function Hero({ items, onPlay, onInfo }: HeroProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [muted, setMuted] = useState(true);
   const [direction, setDirection] = useState(0);
+  const [videoKeys, setVideoKeys] = useState<Map<number, string>>(new Map());
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [videosLoaded, setVideosLoaded] = useState(false);
+  const autoRotateRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Fetch video keys for hero items
+  useEffect(() => {
+    if (items.length === 0 || videosLoaded) return;
+    const fetchVideos = async () => {
+      const map = new Map<number, string>();
+      const batch = items.slice(0, 5);
+      const results = await Promise.allSettled(
+        batch.map(item => getItemVideos(getMediaType(item), item.id))
+      );
+      batch.forEach((item, i) => {
+        const result = results[i];
+        if (result.status === 'fulfilled' && result.value.length > 0) {
+          map.set(item.id, result.value[0].key);
+        }
+      });
+      setVideoKeys(map);
+      setVideosLoaded(true);
+    };
+    fetchVideos();
+  }, [items, videosLoaded]);
 
   useEffect(() => {
     if (items.length === 0) return;
-    const interval = setInterval(() => {
+    autoRotateRef.current = setInterval(() => {
       setDirection(1);
       setCurrentIndex((prev) => (prev + 1) % Math.min(items.length, 5));
     }, 8000);
-    return () => clearInterval(interval);
+    return () => {
+      if (autoRotateRef.current) clearInterval(autoRotateRef.current);
+    };
   }, [items.length]);
+
+  const pauseAutoRotate = () => {
+    if (autoRotateRef.current) {
+      clearInterval(autoRotateRef.current);
+      autoRotateRef.current = null;
+    }
+  };
+
+  const resumeAutoRotate = () => {
+    if (autoRotateRef.current) clearInterval(autoRotateRef.current);
+    autoRotateRef.current = setInterval(() => {
+      setDirection(1);
+      setCurrentIndex((prev) => (prev + 1) % Math.min(items.length, 5));
+    }, 8000);
+  };
+
+  const handleMouseEnter = (index: number) => {
+    pauseAutoRotate();
+    hoverTimeoutRef.current = setTimeout(() => {
+      setHoveredIndex(index);
+    }, 600);
+  };
+
+  const handleMouseLeave = () => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+      hoverTimeoutRef.current = null;
+    }
+    setHoveredIndex(null);
+    resumeAutoRotate();
+  };
 
   const current = items[currentIndex];
   if (!current) return null;
@@ -31,6 +90,8 @@ export default function Hero({ items, onPlay, onInfo }: HeroProps) {
   const mediaType = getMediaType(current);
   const backdrop = getBackdropURL(current.backdrop_path);
   const genreNames = current.genre_ids?.slice(0, 3).map(id => GENRES[id]).filter(Boolean) || [];
+  const videoKey = videoKeys.get(current.id);
+  const showVideo = hoveredIndex === currentIndex && videoKey;
 
   const slideVariants = {
     enter: (dir: number) => ({ x: dir > 0 ? '100%' : '-100%', opacity: 0 }),
@@ -39,7 +100,11 @@ export default function Hero({ items, onPlay, onInfo }: HeroProps) {
   };
 
   return (
-    <div className="relative w-full h-[85vh] sm:h-[90vh] lg:h-screen overflow-hidden">
+    <div
+      className="relative w-full h-[85vh] sm:h-[90vh] lg:h-screen overflow-hidden"
+      onMouseEnter={() => handleMouseEnter(currentIndex)}
+      onMouseLeave={handleMouseLeave}
+    >
       {/* Animated Background */}
       <AnimatePresence mode="wait" custom={direction}>
         <motion.div
@@ -62,7 +127,34 @@ export default function Hero({ items, onPlay, onInfo }: HeroProps) {
         </motion.div>
       </AnimatePresence>
 
-      {/* Ambient Glow — animated hue-shift */}
+      {/* Video Preview Overlay */}
+      <AnimatePresence>
+        {showVideo && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+            className="absolute inset-0 z-[5]"
+          >
+            <iframe
+              src={`https://www.youtube.com/embed/${videoKey}?autoplay=1&mute=1&controls=0&loop=1&playlist=${videoKey}&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&disablekb=1`}
+              className="w-full h-full pointer-events-none"
+              style={{ 
+                border: 'none',
+                transform: 'scale(1.1)',
+                filter: 'brightness(0.7)',
+              }}
+              allow="autoplay; encrypted-media"
+              title="Trailer preview"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-dark-900 via-dark-900/30 to-transparent pointer-events-none" />
+            <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-dark-900 to-transparent pointer-events-none" />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Ambient Glow */}
       <div className="absolute inset-0 pointer-events-none animate-hue-shift">
         <div className="ambient-light bg-purple-600 top-1/4 -left-20" style={{ animation: 'pulse-glow 4s ease-in-out infinite' }} />
         <div className="ambient-light bg-cyan-500 bottom-1/4 right-0" style={{ animation: 'pulse-glow 4s ease-in-out infinite 2s' }} />

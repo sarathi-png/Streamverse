@@ -74,6 +74,18 @@ export function useTVCertification(id: number | null) {
   });
 }
 
+export function useItemVideos(mediaType: MediaType, id: number | null) {
+  return useQuery({
+    queryKey: [mediaType, id, 'videos'],
+    queryFn: async () => {
+      const { getItemVideos } = await import('@/api/tmdb');
+      return getItemVideos(mediaType, id!);
+    },
+    enabled: !!id,
+    staleTime: 1000 * 60 * 30,
+  });
+}
+
 export function useDiscover(
   type: string = 'movie',
   genre?: string,

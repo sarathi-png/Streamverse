@@ -2,19 +2,20 @@ import { useState } from 'react';
 import { Play, Star, BookmarkPlus, BookmarkCheck } from 'lucide-react';
 import { type TMDBMovie, getPosterURL, getTitle, getYear, getMediaType, GENRES } from '@/api/tmdb';
 import type { MediaType } from '@/api/tmdb';
+import { useCardModal } from './CardModalProvider';
 
 interface MovieCardProps {
   item: TMDBMovie;
   index: number;
-  onClick: (id: number, type: MediaType) => void;
   onPlay: (id: number, type: MediaType) => void;
   isBookmarked?: boolean;
   onToggleBookmark?: () => void;
 }
 
-export default function MovieCard({ item, index, onClick, onPlay, isBookmarked, onToggleBookmark }: MovieCardProps) {
+export default function MovieCard({ item, index, onPlay, isBookmarked, onToggleBookmark }: MovieCardProps) {
   const [imgLoaded, setImgLoaded] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const { openCardModal } = useCardModal();
   const title = getTitle(item);
   const year = getYear(item);
   const mediaType = getMediaType(item);
@@ -25,6 +26,15 @@ export default function MovieCard({ item, index, onClick, onPlay, isBookmarked, 
 
   const ratingColor = rating >= 7 ? '#22c55e' : rating >= 5 ? '#eab308' : '#ef4444';
 
+  const handleClick = () => {
+    openCardModal(item);
+  };
+
+  const handlePlayClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onPlay(item.id, mediaType);
+  };
+
   return (
     <div
       className="relative flex-shrink-0 w-[160px] sm:w-[180px] lg:w-[200px] group cursor-pointer animate-fade-in"
@@ -32,7 +42,7 @@ export default function MovieCard({ item, index, onClick, onPlay, isBookmarked, 
         animationDelay: `${Math.min(index * 50, 500)}ms`,
         animationFillMode: 'both',
       }}
-      onClick={() => onClick(item.id, mediaType)}
+      onClick={handleClick}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -95,7 +105,7 @@ export default function MovieCard({ item, index, onClick, onPlay, isBookmarked, 
             <div className="absolute inset-0 flex items-center justify-center">
               <button
                 className="w-16 h-16 rounded-full bg-purple-600/90 backdrop-blur-sm flex items-center justify-center shadow-xl shadow-purple-600/40 hover:scale-110 active:scale-90 transition-transform duration-150 will-change-transform"
-                onClick={(e) => { e.stopPropagation(); onPlay(item.id, mediaType); }}
+                onClick={handlePlayClick}
               >
                 <Play className="w-7 h-7 text-white fill-white ml-0.5" />
               </button>

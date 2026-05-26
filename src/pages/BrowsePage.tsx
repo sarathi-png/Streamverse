@@ -30,7 +30,7 @@ export default function BrowsePage() {
   const page = parseInt(searchParams.get('page') || '1', 10);
 
   const { data, isLoading, error } = useDiscover(type, genre, language, year, dubbed, adult, page);
-  const { isBookmarked, openDetail, playContent, handleToggleBookmarkForDetail } = useApp();
+  const { isBookmarked, playContent, handleToggleBookmarkForDetail } = useApp();
 
   const activeFilters = useMemo(() => {
     const filters: { key: FilterKey; label: string; value: string }[] = [];
@@ -56,7 +56,6 @@ export default function BrowsePage() {
     setSearchParams(next);
   };
 
-  const handleInfo = (id: number, mtype: MediaType) => openDetail(id, mtype);
   const handlePlay = (id: number, mtype: MediaType) => playContent(id, mtype);
   const handleBookmark = (item: any) => handleToggleBookmarkForDetail({
     id: item.id,
@@ -164,7 +163,6 @@ export default function BrowsePage() {
                 key={`${item.id}-${i}`}
                 item={item}
                 index={i}
-                onClick={handleInfo}
                 onPlay={handlePlay}
                 isBookmarked={isBookmarked(item.id, (item.media_type || type) as MediaType)}
                 onToggleBookmark={() => handleBookmark(item)}

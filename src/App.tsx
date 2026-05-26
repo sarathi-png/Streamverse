@@ -1,6 +1,7 @@
 import { lazy, Suspense, useCallback, useEffect } from 'react';
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
+import { Search, LayoutGrid, Home } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import SearchModal from '@/components/SearchModal';
 import LoadingScreen from '@/components/LoadingScreen';
@@ -8,9 +9,10 @@ import LegalFooter from '@/components/LegalFooter';
 import CookieConsent from '@/components/CookieConsent';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { useApp } from '@/contexts/AppContext';
+import { CardModalProvider } from '@/components/CardModalProvider';
 import type { MediaType } from '@/types';
 
-const Home = lazy(() => import('@/pages/Home'));
+const HomePage = lazy(() => import('@/pages/Home'));
 const DetailPage = lazy(() => import('@/pages/DetailPage'));
 const BrowsePage = lazy(() => import('@/pages/BrowsePage'));
 const TermsPage = lazy(() => import('@/pages/TermsPage'));
@@ -19,10 +21,10 @@ const DMCAPage = lazy(() => import('@/pages/DMCAPage'));
 
 const PageLoader = () => <LoadingScreen />;
 
-export default function App() {
+function AppContent() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { searchOpen, setSearchOpen, nav } = useApp();
+  const { searchOpen, setSearchOpen, nav, navigateToPage } = useApp();
 
   useEffect(() => {
     document.title = 'StreamVerse — AI-Powered Cinematic Streaming';
@@ -33,6 +35,9 @@ export default function App() {
     navigate(path);
     setSearchOpen(false);
   }, [navigate, setSearchOpen]);
+
+  const isHomeRoute = location.pathname === '/' || location.pathname === '/movies' || location.pathname === '/tv' || location.pathname === '/mylist';
+  const showMobileNav = isHomeRoute;
 
   return (
     <>
@@ -59,10 +64,10 @@ export default function App() {
                   transition={{ duration: 0.2 }}
                 >
                   <Routes location={location}>
-                    <Route path="/" element={<Home page={nav.page} />} />
-                    <Route path="/movies" element={<Home page="movies" />} />
-                    <Route path="/tv" element={<Home page="tv" />} />
-                    <Route path="/mylist" element={<Home page="mylist" />} />
+                    <Route path="/" element={<HomePage page={nav.page} />} />
+                    <Route path="/movies" element={<HomePage page="movies" />} />
+                    <Route path="/tv" element={<HomePage page="tv" />} />
+                    <Route path="/mylist" element={<HomePage page="mylist" />} />
                     <Route path="/movie/:id" element={<DetailPage />} />
                     <Route path="/tv/:id" element={<DetailPage />} />
                     <Route path="/browse" element={<BrowsePage />} />
@@ -78,32 +83,49 @@ export default function App() {
 
         <LegalFooter />
 
-        {/* Mobile Bottom Nav */}
-        <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden">
-          <div className="glass-strong border-t border-white/5">
-            <div className="flex items-center justify-around py-2">
-              {[
-                { id: 'home' as const, label: 'Home' },
-                { id: 'movies' as const, label: 'Movies' },
-                { id: 'tv' as const, label: 'TV' },
-                { id: 'mylist' as const, label: 'My List' },
-              ].map(({ id, label }) => (
-                <button
-                  key={id}
-                  onClick={() => navigate(id === 'home' ? '/' : `/${id}`)}
-                  className={`flex flex-col items-center gap-0.5 py-1 px-4 rounded-xl transition-all ${
-                    nav.page === id ? 'text-purple-400' : 'text-white/40'
-                  }`}
-                  aria-label={label}
-                >
-                  <span className="text-lg font-medium">{id === 'home' ? '⌂' : id === 'movies' ? '⊡' : id === 'tv' ? '⊞' : '☰'}</span>
-                  <span className="text-[10px] font-medium">{label}</span>
-                </button>
-              ))}
+        {/* Mobile Bottom Nav — Cinezo 3-tab style */}
+        {showMobileNav && (
+          <div className="md:hidden fixed bottom-0 left-0 right-0 z-[120] bg-[#0b0b0f]/95 backdrop-blur-xl px-4 pt-2 pb-5 shadow-[0_-8px_32px_rgba(0,0,0,0.6)] border-t border-white/5">
+            <div className="grid grid-cols-3 gap-1 text-center">
+              <button
+                type="button"
+                onClick={() => navigateToPage('home')}
+                className={`flex flex-col items-center justify-center gap-1 rounded-lg py-1 transition-all duration-300 ${
+                  nav.page === 'home' ? 'text-white' : 'text-gray-500'
+                }`}
+              >
+                <Home className="text-[24px] w-6 h-6" />
+                <span className="text-[11px] font-bold uppercase tracking-wider">Home</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setSearchOpen(true)}
+                className="flex flex-col items-center justify-center gap-1 rounded-lg py-1 transition-all duration-300 relative -top-1.5 text-gray-500"
+              >
+                <Search className="text-[24px] w-6 h-6" />
+                <span className="text-[11px] font-bold uppercase tracking-wider">Search</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => navigate('/browse')}
+                className="flex flex-col items-center justify-center gap-1 rounded-lg py-1 transition-all duration-300 text-gray-500"
+                name="menu"
+              >
+                <LayoutGrid className="text-[24px] w-6 h-6" />
+                <span className="text-[11px] font-bold uppercase tracking-wider">Menu</span>
+              </button>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </>
+  );
+}
+
+export default function App() {
+  return (
+    <CardModalProvider>
+      <AppContent />
+    </CardModalProvider>
   );
 }

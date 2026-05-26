@@ -186,7 +186,7 @@ export default function Home({ page }: HomeProps) {
             <>
               {bookmarkItems.length > 0 ? (
                 <ContentRow title="Saved Content" icon="sparkles" items={bookmarkItems}
-                  onItemClick={handleInfo} onPlay={handlePlay}
+                  onPlay={handlePlay}
                   isBookmarked={(id, type) => isBookmarked(id, type)}
                   onToggleBookmark={handleBookmark}
                 />
@@ -202,7 +202,7 @@ export default function Home({ page }: HomeProps) {
 
           {page === 'home' && continueWatching.length > 0 && (
             <ContentRow title="Continue Watching" icon="clock" items={continueWatching}
-              onItemClick={handleInfo} onPlay={handlePlay}
+              onPlay={handlePlay}
               isBookmarked={(id, type) => isBookmarked(id, type)}
               onToggleBookmark={handleBookmark}
             />
@@ -210,7 +210,7 @@ export default function Home({ page }: HomeProps) {
 
           {(page === 'home') && (
             <ContentRow title="Trending Now" icon="trending" items={trending}
-              onItemClick={handleInfo} onPlay={handlePlay}
+              onPlay={handlePlay}
               isBookmarked={(id, type) => isBookmarked(id, type)}
               onToggleBookmark={handleBookmark}
             />
@@ -220,7 +220,7 @@ export default function Home({ page }: HomeProps) {
           {page === 'home' && aiPicks.length > 0 && (
             <ContentRow title="✨ AI Picks For You" icon="sparkles"
               items={aiPicks as unknown as TMDBMovie[]}
-              onItemClick={handleInfo} onPlay={handlePlay}
+              onPlay={handlePlay}
               isBookmarked={(id, type) => isBookmarked(id, type)}
               onToggleBookmark={handleBookmark}
             />
@@ -230,13 +230,13 @@ export default function Home({ page }: HomeProps) {
             <>
               <ContentRow title="Popular Movies" icon="film"
                 items={popularMovies?.results || []}
-                onItemClick={handleInfo} onPlay={handlePlay}
+                onPlay={handlePlay}
                 isBookmarked={(id, type) => isBookmarked(id, type)}
                 onToggleBookmark={handleBookmark}
               />
               <ContentRow title="Top Rated of All Time" icon="star"
                 items={topRated?.results || []}
-                onItemClick={handleInfo} onPlay={handlePlay}
+                onPlay={handlePlay}
                 isBookmarked={(id, type) => isBookmarked(id, type)}
                 onToggleBookmark={handleBookmark}
               />
@@ -244,7 +244,7 @@ export default function Home({ page }: HomeProps) {
                 <ContentRow key={GENRE_IDS[i]} title={GENRE_TITLES[i]}
                   icon={i % 2 === 0 ? 'film' : 'sparkles'}
                   items={q.data?.results || []}
-                  onItemClick={handleInfo} onPlay={handlePlay}
+                  onPlay={handlePlay}
                   isBookmarked={(id, type) => isBookmarked(id, type)}
                   onToggleBookmark={handleBookmark}
                 />
@@ -255,7 +255,7 @@ export default function Home({ page }: HomeProps) {
           {(page === 'home' || page === 'tv') && (
             <ContentRow title="Popular TV Shows" icon="tv"
               items={popularTV?.results || []}
-              onItemClick={handleInfo} onPlay={handlePlay}
+              onPlay={handlePlay}
               isBookmarked={(id, type) => isBookmarked(id, type)}
               onToggleBookmark={handleBookmark}
             />

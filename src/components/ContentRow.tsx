@@ -9,7 +9,6 @@ interface ContentRowProps {
   title: string;
   items: TMDBMovie[];
   icon?: 'sparkles' | 'trending' | 'star' | 'clock' | 'film' | 'tv';
-  onItemClick: (id: number, type: MediaType) => void;
   onPlay: (id: number, type: MediaType) => void;
   isBookmarked?: (id: number, type: MediaType) => boolean;
   onToggleBookmark?: (item: TMDBMovie) => void;
@@ -19,7 +18,6 @@ export default function ContentRow({
   title,
   items,
   icon = 'sparkles',
-  onItemClick,
   onPlay,
   isBookmarked,
   onToggleBookmark,
@@ -110,7 +108,6 @@ export default function ContentRow({
                 <MovieCard
                   item={item}
                   index={index}
-                  onClick={onItemClick}
                   onPlay={onPlay}
                   isBookmarked={isBookmarked?.(item.id, mediaType)}
                   onToggleBookmark={onToggleBookmark ? () => onToggleBookmark(item) : undefined}

@@ -29,7 +29,7 @@ export default function DetailPage() {
   const detail = type === 'movie' ? movieDetail : tvDetail;
   const loading = type === 'movie' ? movieLoading : tvLoading;
 
-  const { closeDetail, openDetail, playContent } = useApp();
+  const { closeDetail, playContent } = useApp();
 
   const [showPlayer, setShowPlayer] = useState(false);
   const [selectedSeason, setSelectedSeason] = useState(1);
@@ -399,7 +399,6 @@ export default function DetailPage() {
           <div className="mt-8">
             <ContentRow title="You May Also Like" icon="sparkles"
               items={recommendations.map(r => ({ ...r, media_type: r.media_type || type }) as TMDBMovie)}
-              onItemClick={(itemId, itemType) => openDetail(itemId, itemType)}
               onPlay={(itemId, itemType) => playContent(itemId, itemType)}
               isBookmarked={(itemId, itemType) => isInMyList(itemId, itemType)}
             />
