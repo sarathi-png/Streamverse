@@ -32,15 +32,15 @@ export default function LoadingScreen() {
       <div className="relative z-10 text-center space-y-8">
         {/* Animated logo */}
         <div className="relative w-24 h-24 mx-auto">
-          <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-purple-600 via-violet-600 to-cyan-500 animate-pulse"
+          <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-purple-600 via-violet-600 to-purple-400 animate-pulse"
             style={{ borderRadius: '30% 70% 70% 30% / 30% 30% 70% 70%' }}
           />
-          <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-purple-600 to-cyan-500 blur-xl opacity-50 animate-pulse" />
+          <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-purple-600 to-purple-400 blur-xl opacity-50 animate-pulse" />
         </div>
 
         {/* Loading bar */}
         <div className="w-48 h-1 bg-white/10 rounded-full overflow-hidden mx-auto">
-          <div className="h-full w-full bg-gradient-to-r from-purple-500 via-violet-500 to-cyan-500 rounded-full animate-pulse" />
+          <div className="h-full w-full bg-gradient-to-r from-purple-500 via-violet-500 to-purple-300 rounded-full animate-pulse" />
         </div>
 
         {/* Status message */}

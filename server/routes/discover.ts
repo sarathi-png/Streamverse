@@ -27,14 +27,14 @@ discoverRouter.get('/', async (req: Request, res: Response) => {
     const { type = 'movie', genre, language, year, dubbed, adult, page = '1', sort_by = 'popularity.desc' } = req.query;
     const params: Record<string, string> = { page: String(page), sort_by: String(sort_by) };
 
-    if (genre) {
+    if (genre && genre !== '') {
       const genreStr = String(genre);
       params.with_genres = genreStr;
     }
-    if (language) {
+    if (language && language !== '') {
       params.with_original_language = String(language);
     }
-    if (year) {
+    if (year && year !== '') {
       const yearStr = String(year);
       const endpointType = String(type) as 'movie' | 'tv';
       if (endpointType === 'movie') {
@@ -44,7 +44,7 @@ discoverRouter.get('/', async (req: Request, res: Response) => {
       }
     }
 
-    if (dubbed) {
+    if (dubbed && dubbed !== '') {
       const dubbedStr = String(dubbed);
       if (dubbedStr === 'en') {
         params.with_original_language = NON_ENGLISH_LANG_CODES;

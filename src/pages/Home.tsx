@@ -8,7 +8,6 @@ import type { MediaType, Content } from '@/types';
 import { getContinueWatching, getMyList } from '@/utils/storage';
 import { getForYouContent } from '@/utils/recommendations';
 import Hero from '@/components/Hero';
-import TrendingBanner from '@/components/TrendingBanner';
 import ContentRow from '@/components/ContentRow';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { useQuery } from '@tanstack/react-query';
@@ -123,7 +122,7 @@ export default function Home({ page }: HomeProps) {
         <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className="text-center space-y-6">
           <div className="relative w-20 h-20 mx-auto">
             <motion.div
-              className="w-20 h-20 rounded-3xl bg-gradient-to-br from-purple-600 via-violet-600 to-cyan-500"
+              className="w-20 h-20 rounded-3xl bg-gradient-to-br from-purple-600 via-violet-600 to-purple-400"
               animate={{ rotate: 360 }}
               transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
               style={{ borderRadius: '30% 70% 70% 30% / 30% 30% 70% 70%' }}
@@ -138,7 +137,7 @@ export default function Home({ page }: HomeProps) {
           </div>
           <div className="w-48 h-1 bg-white/10 rounded-full overflow-hidden mx-auto">
             <motion.div
-              className="h-full bg-gradient-to-r from-purple-500 to-cyan-500 rounded-full"
+              className="h-full bg-gradient-to-r from-purple-500 to-purple-300 rounded-full"
               initial={{ width: '0%' }}
               animate={{ width: '100%' }}
               transition={{ duration: 2, ease: 'easeInOut' }}
@@ -154,7 +153,6 @@ export default function Home({ page }: HomeProps) {
       <div className="min-h-screen">
         {page === 'home' && (
           <>
-            <TrendingBanner items={trending} onPlay={handlePlay} onInfo={handleInfo} />
             <Hero items={trending.slice(0, 5)} onPlay={handlePlay} onInfo={handleInfo} />
           </>
         )}
@@ -174,7 +172,7 @@ export default function Home({ page }: HomeProps) {
           </div>
         )}
 
-        <div className={page === 'home' ? '-mt-20 relative z-10 space-y-2 pb-20' : 'space-y-2 pb-20'}>
+        <div className={page === 'home' ? '-mt-20 relative z-10 space-y-12 md:space-y-16 pb-24' : 'space-y-12 md:space-y-16 pb-24'}>
           {page === 'mylist' && (
             <>
               {bookmarkItems.length > 0 ? (
@@ -202,7 +200,7 @@ export default function Home({ page }: HomeProps) {
           )}
 
           {(page === 'home') && (
-            <ContentRow title="Trending Now" icon="trending" showRanking items={trending.slice(0, 10)}
+            <ContentRow title="Trending Now" icon="trending" showRanking showLargeRanking items={trending.slice(0, 10)}
               onPlay={handlePlay}
               isBookmarked={(id, type) => isBookmarked(id, type)}
               onToggleBookmark={handleBookmark}
@@ -211,7 +209,7 @@ export default function Home({ page }: HomeProps) {
 
           {/* AI Picks */}
           {page === 'home' && aiPicks.length > 0 && (
-            <ContentRow title="✨ AI Picks For You" icon="sparkles"
+            <ContentRow title="AI Picks For You" icon="sparkles"
               items={aiPicks as unknown as TMDBMovie[]}
               onPlay={handlePlay}
               isBookmarked={(id, type) => isBookmarked(id, type)}
@@ -221,6 +219,7 @@ export default function Home({ page }: HomeProps) {
 
           {(page === 'home' || page === 'movies') && (
             <>
+              <div className="section-divider" />
               <ContentRow title="Popular Movies" icon="film"
                 items={popularMovies?.results || []}
                 onPlay={handlePlay}
@@ -240,12 +239,15 @@ export default function Home({ page }: HomeProps) {
           )}
 
           {(page === 'home' || page === 'tv') && (
-            <ContentRow title="Popular TV Shows" icon="tv"
-              items={popularTV?.results || []}
-              onPlay={handlePlay}
-              isBookmarked={(id, type) => isBookmarked(id, type)}
-              onToggleBookmark={handleBookmark}
-            />
+            <>
+              <div className="section-divider" />
+              <ContentRow title="Popular TV Shows" icon="tv"
+                items={popularTV?.results || []}
+                onPlay={handlePlay}
+                isBookmarked={(id, type) => isBookmarked(id, type)}
+                onToggleBookmark={handleBookmark}
+              />
+            </>
           )}
         </div>
       </div>

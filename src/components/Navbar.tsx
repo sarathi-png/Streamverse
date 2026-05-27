@@ -30,11 +30,11 @@ export default function Navbar() {
       {/* Mobile Top Bar — visible on md:hidden */}
       <div className="md:hidden fixed top-0 left-0 right-0 z-[110] flex items-center justify-between px-5 pt-3 pb-11 bg-gradient-to-b from-[#0a0f1a]/90 via-[#0a0f1a]/50 to-transparent backdrop-blur-[2px] pointer-events-none">
         <div className="pointer-events-auto">
-          <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigateToPage('home')}>
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-600 to-cyan-500 flex items-center justify-center">
-              <span className="text-white font-black text-sm">S</span>
+            <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigateToPage('home')}>
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-600 to-purple-800 flex items-center justify-center">
+                <span className="text-white font-black text-sm">S</span>
+              </div>
             </div>
-          </div>
         </div>
         <button
           type="button"
@@ -50,7 +50,7 @@ export default function Navbar() {
         <nav className="flex items-center gap-1 bg-[#1a1a1e]/60 backdrop-blur-xl px-2 py-1.5 rounded-full border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.5)] pointer-events-auto transition-all hover:bg-[#1a1a1e]/80">
           {/* Logo */}
           <div className="flex items-center gap-2 cursor-pointer mr-2 pl-1" onClick={() => navigateToPage('home')}>
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-600 to-cyan-500 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-600 to-purple-800 flex items-center justify-center">
               <span className="text-white font-black text-sm">S</span>
             </div>
           </div>
@@ -182,7 +182,7 @@ export default function Navbar() {
             >
               <div className="p-6">
                 <div className="flex items-center justify-between mb-8">
-                  <span className="text-lg font-bold bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">Menu</span>
+                  <span className="text-lg font-bold bg-gradient-to-r from-purple-400 to-purple-200 bg-clip-text text-transparent">Menu</span>
                   <button onClick={() => setMobileMenuOpen(false)} aria-label="Close menu">
                     <X className="w-6 h-6 text-white/60" />
                   </button>

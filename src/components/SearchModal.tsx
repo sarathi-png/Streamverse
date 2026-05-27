@@ -89,7 +89,7 @@ export default function SearchModal({ isOpen, onClose, onItemClick }: SearchModa
 
             {/* Search Input */}
             <div className="relative">
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-purple-600/20 to-cyan-500/20 blur-xl" />
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-purple-600/20 to-purple-600/5 blur-xl" />
               <div className="relative glass-strong rounded-2xl flex items-center gap-3 px-5 py-4">
                 <Search className={`w-5 h-5 ${loading ? 'text-purple-400 animate-pulse' : 'text-white/40'}`} />
                 <input

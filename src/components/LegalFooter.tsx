@@ -6,7 +6,7 @@ export default function LegalFooter() {
       <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-purple-600 to-cyan-500 flex items-center justify-center">
+            <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-purple-600 to-purple-800 flex items-center justify-center">
               <span className="text-[10px] font-bold text-white">SV</span>
             </div>
             <span className="text-sm text-white/30">StreamVerse &copy; {new Date().getFullYear()}</span>

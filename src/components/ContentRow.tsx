@@ -10,6 +10,7 @@ interface ContentRowProps {
   items: TMDBMovie[];
   icon?: 'sparkles' | 'trending' | 'star' | 'clock' | 'film' | 'tv';
   showRanking?: boolean;
+  showLargeRanking?: boolean;
   onPlay: (id: number, type: MediaType) => void;
   isBookmarked?: (id: number, type: MediaType) => boolean;
   onToggleBookmark?: (item: TMDBMovie) => void;
@@ -20,6 +21,7 @@ export default function ContentRow({
   items,
   icon = 'sparkles',
   showRanking = false,
+  showLargeRanking = false,
   onPlay,
   isBookmarked,
   onToggleBookmark,
@@ -46,6 +48,11 @@ export default function ContentRow({
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'ArrowLeft') { scroll('left'); e.preventDefault(); }
+    if (e.key === 'ArrowRight') { scroll('right'); e.preventDefault(); }
+  };
+
   if (!items || items.length === 0) return null;
 
   return (
@@ -54,7 +61,7 @@ export default function ContentRow({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-50px' }}
       transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-      className="relative py-4 sm:py-6"
+      className="relative py-8 sm:py-12"
     >
       {/* Section Header */}
       <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 mb-4">
@@ -64,7 +71,7 @@ export default function ContentRow({
             whileInView={{ opacity: 1, rotate: 0, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            className="p-2 rounded-xl bg-gradient-to-br from-purple-600/20 to-cyan-500/20 border border-purple-500/20"
+            className="p-2 rounded-xl bg-purple-600/20 border border-purple-500/20"
           >
             <IconComponent className="w-4 h-4 text-purple-400" />
           </motion.div>
@@ -82,7 +89,7 @@ export default function ContentRow({
             whileInView={{ scaleX: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-            className="flex-1 h-px bg-gradient-to-r from-purple-500/50 via-cyan-500/30 to-transparent origin-left"
+            className="flex-1 h-px bg-gradient-to-r from-purple-500/50 via-purple-500/20 to-transparent origin-left"
           />
         </div>
       </div>
@@ -93,6 +100,7 @@ export default function ContentRow({
         <motion.button
           className="absolute left-0 top-0 bottom-0 w-12 z-10 flex items-center justify-center bg-gradient-to-r from-dark-900 to-transparent opacity-0 group-hover/row:opacity-100 hover:scale-110 active:scale-90 will-change-transform transition-all duration-200"
           onClick={() => scroll('left')}
+          aria-label="Scroll left"
         >
           <ChevronLeft className="w-6 h-6 text-white" />
         </motion.button>
@@ -100,17 +108,26 @@ export default function ContentRow({
         {/* Cards */}
         <div
           ref={scrollRef}
-          className="flex gap-4 sm:gap-5 overflow-x-auto hide-scrollbar px-4 sm:px-6 lg:px-8 scroll-smooth"
+          className="flex gap-4 sm:gap-5 overflow-x-auto hide-scrollbar px-4 sm:px-6 lg:px-8 scroll-smooth py-10 -my-10"
           style={{ scrollSnapType: 'x mandatory' }}
+          tabIndex={0}
+          role="listbox"
+          aria-label={title}
+          aria-roledescription="carousel"
+          onKeyDown={handleKeyDown}
         >
           {items.map((item, index) => {
             const mediaType = getMediaType(item);
             return (
-              <div key={`${item.id}-${index}`} style={{ scrollSnapAlign: 'start' }}>
+              <div
+                key={`${item.id}-${index}`}
+                style={{ scrollSnapAlign: 'start' }}
+              >
                 <MovieCard
                   item={item}
                   index={index}
                   rank={showRanking ? index + 1 : undefined}
+                  largeRank={showLargeRanking}
                   onPlay={onPlay}
                   isBookmarked={isBookmarked?.(item.id, mediaType)}
                   onToggleBookmark={onToggleBookmark ? () => onToggleBookmark(item) : undefined}
@@ -124,6 +141,7 @@ export default function ContentRow({
         <motion.button
           className="absolute right-0 top-0 bottom-0 w-12 z-10 flex items-center justify-center bg-gradient-to-l from-dark-900 to-transparent opacity-0 group-hover/row:opacity-100 hover:scale-110 active:scale-90 will-change-transform transition-all duration-200"
           onClick={() => scroll('right')}
+          aria-label="Scroll right"
         >
           <ChevronRight className="w-6 h-6 text-white" />
         </motion.button>

@@ -44,8 +44,8 @@ function AppContent() {
       <div className="min-h-screen bg-dark-900 text-white overflow-hidden">
         {/* Ambient background */}
         <div className="fixed inset-0 pointer-events-none z-0">
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-purple-600/5 rounded-full blur-[150px]" />
-          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-cyan-500/5 rounded-full blur-[150px]" />
+          <div className="absolute top-1/4 left-1/3 w-[600px] h-[600px] bg-purple-600/4 rounded-full blur-[180px]" />
+          <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-purple-950/8 to-transparent" />
         </div>
 
         <Navbar />
@@ -100,7 +100,7 @@ function AppContent() {
               <button
                 type="button"
                 onClick={() => setSearchOpen(true)}
-                className="flex flex-col items-center justify-center gap-1 rounded-lg py-1 transition-all duration-300 relative -top-1.5 text-gray-500"
+                className="flex flex-col items-center justify-center gap-1 rounded-lg py-1 transition-all duration-300 text-gray-500"
               >
                 <Search className="text-[24px] w-6 h-6" />
                 <span className="text-[11px] font-bold uppercase tracking-wider">Search</span>

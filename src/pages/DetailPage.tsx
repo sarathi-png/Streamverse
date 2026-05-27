@@ -108,7 +108,7 @@ export default function DetailPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center space-y-4">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-600 to-cyan-500 mx-auto animate-pulse" />
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-600 to-purple-400 mx-auto animate-pulse" />
           <p className="text-white/40">Loading details...</p>
         </motion.div>
       </div>
@@ -177,7 +177,6 @@ export default function DetailPage() {
           <div className="absolute inset-0 bg-gradient-to-r from-dark-900/90 via-dark-900/50 to-transparent" />
           <div className="absolute inset-0 pointer-events-none">
             <div className="ambient-light bg-purple-600/40 top-1/3 -left-10" />
-            <div className="ambient-light bg-cyan-500/30 bottom-1/3 right-10" />
           </div>
         </div>
 
