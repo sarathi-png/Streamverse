@@ -7,12 +7,13 @@ import { useCardModal } from './CardModalProvider';
 interface MovieCardProps {
   item: TMDBMovie;
   index: number;
+  rank?: number;
   onPlay: (id: number, type: MediaType) => void;
   isBookmarked?: boolean;
   onToggleBookmark?: () => void;
 }
 
-export default function MovieCard({ item, index, onPlay, isBookmarked, onToggleBookmark }: MovieCardProps) {
+export default function MovieCard({ item, index, rank, onPlay, isBookmarked, onToggleBookmark }: MovieCardProps) {
   const [imgLoaded, setImgLoaded] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const { openCardModal } = useCardModal();
@@ -25,6 +26,16 @@ export default function MovieCard({ item, index, onPlay, isBookmarked, onToggleB
   const genreNames = item.genre_ids?.slice(0, 3).map(id => GENRES[id]).filter(Boolean) || [];
 
   const ratingColor = rating >= 7 ? '#22c55e' : rating >= 5 ? '#eab308' : '#ef4444';
+
+  const rankColors: Record<number, { bg: string; text: string; label: string }> = {
+    1: { bg: 'from-yellow-400 to-amber-600', text: 'text-yellow-900', label: '1st' },
+    2: { bg: 'from-gray-300 to-gray-500', text: 'text-gray-900', label: '2nd' },
+    3: { bg: 'from-amber-600 to-amber-800', text: 'text-amber-100', label: '3rd' },
+  };
+  const defaultRankColor = { bg: 'from-dark-600 to-dark-800', text: 'text-white/80', label: '' };
+
+  const rankStyle = rank && rank <= 3 ? rankColors[rank] : defaultRankColor;
+  const rankLabel = rank && rank <= 3 ? rankColors[rank].label : rank ? `${rank}th` : '';
 
   const handleClick = () => {
     openCardModal(item);
@@ -72,6 +83,14 @@ export default function MovieCard({ item, index, onPlay, isBookmarked, onToggleB
         )}
 
         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-200" />
+
+        {rank && (
+          <div className="absolute top-0 left-0 z-20">
+            <div className={`flex items-center gap-1 px-2.5 py-1 rounded-br-xl bg-gradient-to-r ${rankStyle.bg} shadow-lg`}>
+              <span className={`text-xs font-black ${rankStyle.text} tabular-nums`}>{rankLabel}</span>
+            </div>
+          </div>
+        )}
 
         <div className="absolute top-2 right-2 z-20">
           <div

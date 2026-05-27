@@ -8,6 +8,7 @@ import type { MediaType, Content } from '@/types';
 import { getContinueWatching, getMyList } from '@/utils/storage';
 import { getForYouContent } from '@/utils/recommendations';
 import Hero from '@/components/Hero';
+import TrendingBanner from '@/components/TrendingBanner';
 import ContentRow from '@/components/ContentRow';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { useQuery } from '@tanstack/react-query';
@@ -43,20 +44,10 @@ function usePopularTV() {
   });
 }
 
-function useTopRated() {
-  return useQuery({
-    queryKey: ['topRated'],
-    queryFn: () => import('@/api/tmdb').then(m => m.getTopRated()),
-    staleTime: 10 * 60 * 1000,
-  });
-}
-
 export default function Home({ page }: HomeProps) {
   const { data: trendingData, isLoading: trendingLoading } = useTrending();
   const { data: popularMovies } = usePopularMovies();
   const { data: popularTV } = usePopularTV();
-  const { data: topRated } = useTopRated();
-
   const genreQueries = GENRE_IDS.map(id => useGenreMovies(id));
   const { isBookmarked, openDetail, playContent, handleToggleBookmarkForDetail } = useApp();
 
@@ -122,10 +113,9 @@ export default function Home({ page }: HomeProps) {
     const allItems = [
       ...(popularMovies?.results || []),
       ...(popularTV?.results || []),
-      ...(topRated?.results || []),
     ];
     return getForYouContent(allItems as unknown as Content[], getContinueWatching());
-  }, [popularMovies, popularTV, topRated]);
+  }, [popularMovies, popularTV]);
 
   if (loading) {
     return (
@@ -163,7 +153,10 @@ export default function Home({ page }: HomeProps) {
     <ErrorBoundary>
       <div className="min-h-screen">
         {page === 'home' && (
-          <Hero items={trending.slice(0, 5)} onPlay={handlePlay} onInfo={handleInfo} />
+          <>
+            <TrendingBanner items={trending} onPlay={handlePlay} onInfo={handleInfo} />
+            <Hero items={trending.slice(0, 5)} onPlay={handlePlay} onInfo={handleInfo} />
+          </>
         )}
 
         {page !== 'home' && (
@@ -209,7 +202,7 @@ export default function Home({ page }: HomeProps) {
           )}
 
           {(page === 'home') && (
-            <ContentRow title="Trending Now" icon="trending" items={trending}
+            <ContentRow title="Trending Now" icon="trending" showRanking items={trending.slice(0, 10)}
               onPlay={handlePlay}
               isBookmarked={(id, type) => isBookmarked(id, type)}
               onToggleBookmark={handleBookmark}
@@ -230,12 +223,6 @@ export default function Home({ page }: HomeProps) {
             <>
               <ContentRow title="Popular Movies" icon="film"
                 items={popularMovies?.results || []}
-                onPlay={handlePlay}
-                isBookmarked={(id, type) => isBookmarked(id, type)}
-                onToggleBookmark={handleBookmark}
-              />
-              <ContentRow title="Top Rated of All Time" icon="star"
-                items={topRated?.results || []}
                 onPlay={handlePlay}
                 isBookmarked={(id, type) => isBookmarked(id, type)}
                 onToggleBookmark={handleBookmark}

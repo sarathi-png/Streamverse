@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Search, Bookmark, Menu, X, Film, Tv, Home, Settings, User, ChevronDown } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
-import { getStreamingProvider, setStreamingProvider } from '@/utils/vidking';
+import { getProviderLabel, getProviderColor, getDefaultProvider, setDefaultProvider, FALLBACK_ORDER } from '@/utils/embedProviders';
 import type { StreamingProvider } from '@/types';
 import CategoriesDropdown from './CategoriesDropdown';
 
@@ -12,11 +12,11 @@ export default function Navbar() {
   const { setSearchOpen, nav, navigateToPage } = useApp();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [provider, setProvider] = useState<StreamingProvider>(getStreamingProvider());
+  const [provider, setProvider] = useState<StreamingProvider>(getDefaultProvider());
 
   const handleProviderChange = (p: StreamingProvider) => {
     setProvider(p);
-    setStreamingProvider(p);
+    setDefaultProvider(p);
   };
 
   const navItems = [
@@ -83,8 +83,8 @@ export default function Navbar() {
           <div className="flex items-center gap-1 pr-1">
             {/* Provider indicator */}
             <div className="hidden lg:flex items-center gap-1 px-2 py-1 rounded-full text-[10px] text-white/40">
-              <span className={`w-1.5 h-1.5 rounded-full ${provider === 'vidking' ? 'bg-purple-400' : 'bg-cyan-400'}`} />
-              {provider === 'vidking' ? 'VidKing' : 'VidSrc'}
+              <span className={`w-1.5 h-1.5 rounded-full ${getProviderColor(provider)}`} />
+              {getProviderLabel(provider)}
             </div>
 
             {/* Settings */}
@@ -105,7 +105,7 @@ export default function Navbar() {
                     className="absolute right-0 top-12 z-20 w-48 bg-[#1a1a1e]/95 backdrop-blur-xl rounded-2xl p-3 border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.5)] space-y-2"
                   >
                     <p className="text-xs text-white/40 uppercase tracking-wider font-semibold px-1">Streaming Provider</p>
-                    {(['vidking', 'vidsrc'] as StreamingProvider[]).map(p => (
+                    {FALLBACK_ORDER.map(p => (
                       <button
                         key={p}
                         onClick={() => handleProviderChange(p)}
@@ -113,7 +113,8 @@ export default function Navbar() {
                           provider === p ? 'bg-purple-600/30 text-purple-300' : 'text-white/60 hover:bg-white/5'
                         }`}
                       >
-                        {p === 'vidking' ? 'VidKing' : 'VidSrc'}
+                        <span className={`inline-block w-1.5 h-1.5 rounded-full mr-2 ${getProviderColor(p)}`} />
+                        {getProviderLabel(p)}
                       </button>
                     ))}
                   </motion.div>
@@ -208,7 +209,7 @@ export default function Navbar() {
                   </button>
                   <hr className="border-white/10 my-4" />
                   <p className="text-xs text-white/40 uppercase tracking-wider font-semibold px-4 mb-2">Provider</p>
-                  {(['vidking', 'vidsrc'] as StreamingProvider[]).map(p => (
+                  {FALLBACK_ORDER.map(p => (
                     <button
                       key={p}
                       onClick={() => { handleProviderChange(p); setMobileMenuOpen(false); }}
@@ -216,7 +217,8 @@ export default function Navbar() {
                         provider === p ? 'bg-purple-600/30 text-purple-300' : 'text-white/60 hover:bg-white/5'
                       }`}
                     >
-                      {p === 'vidking' ? 'VidKing' : 'VidSrc'}
+                      <span className={`inline-block w-1.5 h-1.5 rounded-full mr-2 ${getProviderColor(p)}`} />
+                      {getProviderLabel(p)}
                     </button>
                   ))}
                 </div>

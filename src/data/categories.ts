@@ -99,10 +99,15 @@ export function buildBrowseURL(
     ? new URLSearchParams(currentParams)
     : new URLSearchParams();
   params.set('type', type);
-  if (section === 'genre') params.set('genre', value);
-  else if (section === 'language') params.set('language', value);
+  // Make language and dubbed mutually exclusive
+  if (section === 'language') {
+    params.delete('dubbed');
+    params.set('language', value);
+  } else if (section === 'dubbed') {
+    params.delete('language');
+    params.set('dubbed', value);
+  } else if (section === 'genre') params.set('genre', value);
   else if (section === 'year') params.set('year', value);
-  else if (section === 'dubbed') params.set('dubbed', value);
   else if (section === 'adult') params.set('adult', value);
   params.set('page', '1');
   return `/browse?${params.toString()}`;

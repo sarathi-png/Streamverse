@@ -31,7 +31,7 @@ discoverRouter.get('/', async (req: Request, res: Response) => {
       const genreStr = String(genre);
       params.with_genres = genreStr;
     }
-    if (language && !dubbed) {
+    if (language) {
       params.with_original_language = String(language);
     }
     if (year) {
@@ -59,7 +59,7 @@ discoverRouter.get('/', async (req: Request, res: Response) => {
       params.with_watch_monetization_types = 'flatrate|rent|buy';
     }
 
-    if (adult === 'true') {
+    if (adult === 'true' && type !== 'tv') {
       params.include_adult = 'true';
     }
 

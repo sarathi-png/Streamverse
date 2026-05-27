@@ -1,5 +1,5 @@
 export type MediaType = 'movie' | 'tv';
-export type StreamingProvider = 'vidking' | 'vidsrc';
+export type StreamingProvider = 'vidlink' | 'embedsu' | 'smashy' | '2embed' | 'vidking' | 'vidsrc';
 
 export interface Content {
   id: number;
@@ -123,6 +123,11 @@ export interface TMDBSeasonDetail {
 }
 
 export const ALLOWED_EMBED_DOMAINS = [
+  'vidlink.pro',
+  'embed.su',
+  'smashystream.xyz',
+  'embed.smashystream.com',
+  '2embed.cc',
   'vidking.net',
   'www.vidking.net',
   'vidking1.net',
