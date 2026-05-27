@@ -3,7 +3,7 @@ import { useParams, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Play, ArrowLeft, Star, Clock, Calendar, BookmarkPlus, BookmarkCheck,
-  ChevronDown, Film, Tv, Users, Share2
+  ChevronDown, Film, Tv, Users, Share2, AlertTriangle, RefreshCw
 } from 'lucide-react';
 import { useMovieDetail, useTVDetail, useTVSeasonDetail, useMovieCertification, useTVCertification } from '@/api/useTMDB';
 import { useApp } from '@/contexts/AppContext';
@@ -23,15 +23,16 @@ export default function DetailPage() {
   const id = Number(paramId);
   const type = location.pathname.startsWith('/tv') ? 'tv' as MediaType : 'movie' as MediaType;
 
-  const { data: movieDetail, isLoading: movieLoading } = useMovieDetail(type === 'movie' ? id : null);
-  const { data: tvDetail, isLoading: tvLoading } = useTVDetail(type === 'tv' ? id : null);
+  const { data: movieDetail, isLoading: movieLoading, isError: movieError } = useMovieDetail(type === 'movie' ? id : null);
+  const { data: tvDetail, isLoading: tvLoading, isError: tvError } = useTVDetail(type === 'tv' ? id : null);
 
   const detail = type === 'movie' ? movieDetail : tvDetail;
   const loading = type === 'movie' ? movieLoading : tvLoading;
+  const error = type === 'movie' ? movieError : tvError;
 
-  const { closeDetail, playContent } = useApp();
+  const { closeDetail, playContent, nav } = useApp();
 
-  const [showPlayer, setShowPlayer] = useState(false);
+  const [showPlayer, setShowPlayer] = useState(nav.playerActive);
   const [selectedSeason, setSelectedSeason] = useState(1);
   const [selectedEpisode, setSelectedEpisode] = useState<number | null>(null);
   const [expandedOverview, setExpandedOverview] = useState(false);
@@ -103,12 +104,31 @@ export default function DetailPage() {
     toggleMyList(item);
   }, [detail, type]);
 
-  if (loading || !detail) {
+  if (loading || (!detail && !error)) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center space-y-4">
           <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-600 to-cyan-500 mx-auto animate-pulse" />
           <p className="text-white/40">Loading details...</p>
+        </motion.div>
+      </div>
+    );
+  }
+
+  if (error || !detail) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center space-y-4">
+          <AlertTriangle className="w-12 h-12 text-red-400 mx-auto" />
+          <p className="text-white/60 text-sm">Failed to load content details</p>
+          <p className="text-white/30 text-xs">The server may be unavailable. Please try again.</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-purple-600/30 text-purple-300 text-sm hover:bg-purple-600/50 transition-all mx-auto"
+          >
+            <RefreshCw className="w-4 h-4" />
+            Retry
+          </button>
         </motion.div>
       </div>
     );

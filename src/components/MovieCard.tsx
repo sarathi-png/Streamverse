@@ -86,7 +86,7 @@ export default function MovieCard({ item, index, rank, onPlay, isBookmarked, onT
 
         {rank && (
           <div className="absolute top-0 left-0 z-20">
-            <div className={`flex items-center gap-1 px-2.5 py-1 rounded-br-xl bg-gradient-to-r ${rankStyle.bg} shadow-lg`}>
+            <div className={`flex items-center gap-1 px-2.5 py-1 rounded-br-xl bg-gradient-to-r ${rankStyle.bg} shadow-lg backdrop-blur-sm`}>
               <span className={`text-xs font-black ${rankStyle.text} tabular-nums`}>{rankLabel}</span>
             </div>
           </div>
@@ -108,7 +108,7 @@ export default function MovieCard({ item, index, rank, onPlay, isBookmarked, onT
 
         {onToggleBookmark && (
           <button
-            className="absolute top-2 left-2 z-20 p-1.5 rounded-lg glass opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:scale-110 active:scale-90 will-change-transform"
+            className={`absolute z-20 p-1.5 rounded-lg glass opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:scale-110 active:scale-90 will-change-transform ${rank ? 'top-8 left-1' : 'top-2 left-2'}`}
             onClick={(e) => { e.stopPropagation(); onToggleBookmark(); }}
           >
             {isBookmarked ? (
